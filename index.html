@@ -12,8 +12,13 @@
     header {
       display: flex;
       align-items: center;
-      gap: 20px;
+      justify-content: space-between;
       margin-bottom: 20px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
     }
     header img {
       height: 40px;
@@ -22,6 +27,10 @@
       font-size: 24px;
       margin: 0;
       color: #1a1a1a;
+    }
+    .last-updated {
+      font-size: 14px;
+      color: #555;
     }
     .filters {
       display: flex;
@@ -38,7 +47,7 @@
       color: #555;
       margin-bottom: 4px;
     }
-    select.filter-dropdown, input.filter-date {
+    select.filter-dropdown {
       font-size: 14px;
       padding: 6px 12px;
       border-radius: 6px;
@@ -98,15 +107,16 @@
 </head>
 <body>
   <header>
-    <img src="https://inderpal2.github.io/feature-tracker/assets/logo.png" alt="MSET Logo">
-    <h2>MSETs Feature Tracker</h2>
+    <div class="header-left">
+      <img src="https://inderpal2.github.io/feature-tracker/assets/logo.png" alt="MSET Logo">
+      <h2>MSETs Feature Tracker</h2>
+    </div>
+    <div class="last-updated">
+      Last Updated: <span id="lastUpdatedText">--</span>
+    </div>
   </header>
 
   <div class="filters">
-    <div class="filter-group">
-      <label for="lastUpdated">Last Updated</label>
-      <input type="date" id="lastUpdated" class="filter-date" onchange="filterTable()" />
-    </div>
     <div class="filter-group">
       <label for="quarterFilter">Quarter</label>
       <select id="quarterFilter" class="filter-dropdown" onchange="filterTable()">
@@ -144,8 +154,6 @@
       <tr>
         <th>Feature</th>
         <th>Release Date</th>
-        <th>Quarter</th>
-        <th>Last Updated</th>
         <th>Dev Status</th>
         <th>QA Status</th>
         <th>Monitoring Dashboard</th>
@@ -186,15 +194,9 @@
       const row = document.createElement("tr");
 
       row.innerHTML = `
-        <td><input type="text" placeholder="Feature name" /></td>
+        <td><input type="text" placeholder="Feature name" data-quarter="${quarters[Math.floor(Math.random() * quarters.length)]}" /></td>
         <td><input type="date" /></td>
       `;
-
-      const quarter = document.createElement("td");
-      quarter.appendChild(createSelect(quarters));
-
-      const updated = document.createElement("td");
-      updated.innerHTML = '<input type="date" />';
 
       const dev = document.createElement("td");
       dev.appendChild(createSelect(statuses));
@@ -214,8 +216,6 @@
       const notes = document.createElement("td");
       notes.innerHTML = '<textarea placeholder="1. "></textarea>';
 
-      row.appendChild(quarter);
-      row.appendChild(updated);
       row.appendChild(dev);
       row.appendChild(qa);
       row.appendChild(dashboard);
@@ -224,22 +224,27 @@
       row.appendChild(notes);
 
       table.appendChild(row);
+      updateLastUpdated();
     }
 
     function filterTable() {
       const selectedQuarter = document.getElementById("quarterFilter").value;
-      const selectedDate = document.getElementById("lastUpdated").value;
       const rows = document.querySelectorAll("#featureTable tbody tr");
 
       rows.forEach(row => {
-        const quarterValue = row.cells[2]?.querySelector("select")?.value;
-        const updatedValue = row.cells[3]?.querySelector("input")?.value;
-
+        const featureInput = row.cells[0]?.querySelector("input");
+        const quarterValue = featureInput?.dataset?.quarter;
         const quarterMatch = selectedQuarter === "All" || quarterValue === selectedQuarter;
-        const dateMatch = !selectedDate || updatedValue === selectedDate;
-
-        row.style.display = (quarterMatch && dateMatch) ? "" : "none";
+        row.style.display = quarterMatch ? "" : "none";
       });
+    }
+
+    function updateLastUpdated() {
+      const today = new Date();
+      const formatted = today.toLocaleDateString('en-GB', {
+        year: 'numeric', month: 'short', day: 'numeric'
+      });
+      document.getElementById("lastUpdatedText").textContent = formatted;
     }
 
     addRow();
