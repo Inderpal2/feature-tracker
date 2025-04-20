@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MSETs Feature Tracker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+      padding: 40px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: #f0f4f8;
+      font-weight: 600;
+      text-align: left;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    select, input[type="text"], input[type="date"] {
+      width: 100%;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .add-row-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 14px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .add-row-btn:hover {
+      background: #005bb5;
+    }
+  </style>
+</head>
+<body>
+  <h2>MSETs Feature Tracker</h2>
+  <table id="featureTable">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Release Date</th>
+        <th>Dev Status</th>
+        <th>QA Status</th>
+        <th>Dashboard</th>
+        <th>DevOps</th>
+        <th>Ops Informed</th>
+        <th>Blockers</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  <button class="add-row-btn" onclick="addRow()">Add Row</button>
+
+  <script>
+    const statuses = ["✅ Done", "🔄 In Progress", "⬜ Not Started", "❌ Blocked"];
+    const yesNoPartial = ["Yes", "No", "Partial"];
+
+    function createSelect(options) {
+      const select = document.createElement("select");
+      options.forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt;
+        option.textContent = opt;
+        select.appendChild(option);
+      });
+      return select;
+    }
+
+    function addRow() {
+      const table = document.querySelector("#featureTable tbody");
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td><input type="text" placeholder="Feature name" /></td>
+        <td><input type="date" /></td>
+      `;
+      row.appendChild(document.createElement("td")).appendChild(createSelect(statuses));
+      row.appendChild(document.createElement("td")).appendChild(createSelect(statuses));
+      row.appendChild(document.createElement("td")).appendChild(createSelect(statuses));
+      row.appendChild(document.createElement("td")).appendChild(createSelect(statuses));
+      row.appendChild(document.createElement("td")).appendChild(createSelect(yesNoPartial));
+      row.innerHTML += `
+        <td><input type="text" placeholder="Blockers" /></td>
+        <td><input type="text" placeholder="Notes" /></td>
+      `;
+
+      table.appendChild(row);
+    }
+
+    // Add first row by default
+    addRow();
+  </script>
+</body>
+</html>
